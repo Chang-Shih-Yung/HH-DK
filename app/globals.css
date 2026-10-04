@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+/* Breakpoints follow the approved layout: phone ≤ 600, hamburger ≤ 800. */
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 601px;
+  --breakpoint-md: 801px;
+  --breakpoint-lg: 1100px;
+
+  --color-cream: #f9f4e6;
+  --color-ink: #0c0d0f;
+
+  --font-sans: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP",
+    "PingFang TC", sans-serif;
+
+  --ease-soft: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-66: cubic-bezier(0.66, 0, 0.01, 1);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --font-mono: var(--font-space-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --spacing-gutter: var(--gutter);
+  --spacing-inset: var(--inset);
+}
+
+:root {
+  --bg: #0c0d0f;
+  --fg: #f7f4ed;
+  --muted: #9b9da0;
+  --accent: #ef3710;
+  --gutter: 20px;
+  --inset: 26px;
+  /* Grid rows, as a share of the viewport height. */
+  --row1: 26%;
+  --row2: 70%;
+  color-scheme: dark;
+}
+
+@media (min-width: 601px) {
+  :root {
+    --gutter: clamp(24px, 4vw, 70px);
+    --inset: calc(var(--gutter) + 8px);
+    --row1: 33%;
+    --row2: 68%;
+  }
+}
+
+[data-mode="light"] {
+  --bg: #edece7;
+  --fg: #171819;
+  --muted: #65676a;
+  color-scheme: light;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+  }
+
+  /* Programmatic focus targets (sections, the scroller) do not need a ring. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+}
+
+/* The scroller's real height, measured once per resize. Sections sized with it match the
+   WebGL canvas exactly, whatever the browser's toolbars are doing. */
+@utility h-view {
+  height: var(--vh, 100svh);
+}
+
+@utility min-h-view {
+  min-height: var(--vh, 100svh);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ── Hairline grid ──────────────────────────────────────────────────────────
+   One CSS pixel at 10% of the text colour. Rows and marks are gradients; the column
+   lines are an SVG path (components/chrome/Grid.tsx) so they can bow in the lens bands.
+   Lines break for 24px around every crossing, where a 12px mark sits. */
+.grid-lines {
+  --gl: color-mix(in srgb, var(--fg) 10%, transparent);
+  --gm: color-mix(in srgb, var(--fg) 40%, transparent);
+  --x1: var(--gutter);
+  --x2: 50%;
+  --x3: 50%;
+  --x4: calc(100% - var(--gutter));
+}
+
+@media (min-width: 601px) {
+  .grid-lines {
+    --x2: calc(var(--gutter) + (100% - var(--gutter) * 2) / 3);
+    --x3: calc(var(--gutter) + (100% - var(--gutter) * 2) * 2 / 3);
+  }
+}
+
+.grid-lines i {
+  position: absolute;
+  display: block;
+}
+
+.grid-h {
+  left: 0;
+  right: 0;
+  top: var(--y);
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--gl) calc(var(--x1) - 12px),
+    transparent 0 calc(var(--x1) + 12px),
+    var(--gl) 0 calc(var(--x2) - 12px),
+    transparent 0 calc(var(--x2) + 12px),
+    var(--gl) 0 calc(var(--x3) - 12px),
+    transparent 0 calc(var(--x3) + 12px),
+    var(--gl) 0 calc(var(--x4) - 12px),
+    transparent 0 calc(var(--x4) + 12px),
+    var(--gl) 0
+  );
+}
+
+.grid-mark {
+  left: var(--x);
+  top: var(--y);
+  width: 13px;
+  height: 13px;
+  margin: -6px 0 0 -6px;
+  background:
+    linear-gradient(var(--gm), var(--gm)) center / 1px 100% no-repeat,
+    linear-gradient(var(--gm), var(--gm)) center / 100% 1px no-repeat;
+}
+
+/* Snap to whole pixels where the browser can, so 1px stays 1px. */
+@supports (left: round(1.5px, 1px)) {
+  .grid-mark {
+    left: round(var(--x), 1px);
+  }
+
+  .grid-h,
+  .grid-mark {
+    top: round(var(--y), 1px);
+  }
+}
+
+/* ── Loader ─────────────────────────────────────────────────────────────────
+   It lifts on its own after six seconds even if scripts never run. */
+.loader {
+  animation: loader-out 0.65s ease 6s forwards;
+}
+
+.loader[data-done="true"] {
+  animation: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.65s,
+    visibility 0.65s;
+}
+
+@keyframes loader-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ── Pictures ───────────────────────────────────────────────────────────────
+   While the canvas is drawing a picture (desktop), its <img> and frame step back. */
+.picture[data-gl="on"] {
+  background: transparent;
+}
+
+.picture[data-gl="on"] img {
+  opacity: 0;
+}
+
+/* ── Closing ────────────────────────────────────────────────────────────────
+   The wordmark takes the heading's place: same centre line, shifted down by half of the
+   heading's top padding. --mark is the wordmark's height (its artwork is 858 × 146). */
+.closing {
+  --mark: calc((100vw - var(--inset) * 2) * 0.1702);
+  --centre: 38%;
+}
+
+@media (min-width: 601px) {
+  .closing {
+    --centre: 40%;
+  }
+}
+
+.closing-brand {
+  top: var(--centre);
+  transform: translateY(-50%);
+}
+
+.closing-links {
+  top: 72%;
+}
+
+@media (min-width: 601px) {
+  .closing-links {
+    top: 78%;
+  }
+}
+
+/* ── Globe ────────────────────────────────────────────────────────────────── */
+.globe-meridian {
+  animation: globe-turn 2.6s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  will-change: transform;
+}
+
+@keyframes globe-turn {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(-1);
+  }
+}
+
+/* ── Lightbox ─────────────────────────────────────────────────────────────── */
+.lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.87);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  .loader {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

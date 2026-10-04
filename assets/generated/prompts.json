@@ -1,0 +1,50 @@
+{
+  "references": [
+    "VIS/HHDK_画板 1 副本 2.png",
+    "assets/images/wordmark-reference.png"
+  ],
+  "images": [
+    {
+      "name": "01-night-hoodie",
+      "prompt": "Photorealistic Japanese streetwear product editorial for the HH:DK homepage. Square photograph, one clean hero product on an adult Japanese fashion model, not a catalog cutout. Approved VIS moodboard is style reference ONLY. Second image is the EXACT cream HH:DK brand wordmark to reproduce faithfully as garment print or embroidery: both H and D/K uppercase, two circular colon dots, wide rounded geometric silhouette. Preserve its custom letter shapes, never replace with generic typeset. Refined black/cream wardrobe, a tiny vermilion detail, rich natural textile texture, understated Tokyo backstreet, soft premium light, realistic natural skin, product tack sharp, softly defocused city, spacious and uncluttered. No captions, frame, collage, watermarks or other brands. Main logo and full product unobstructed within central 75% of frame. Rear three-quarter medium shot of an adult man wearing a charcoal oversized cotton hoodie, big cream HH:DK approved wordmark across the back. Quiet Shibuya side street at blue hour, faint red sign bokeh, warm soft street light revealing charcoal textile rather than pure black. Frame head to upper thigh, hoodie fills image.",
+      "source": "exec-ea0564ed-d4bf-4e81-9357-82875e161dde.png",
+      "original": "01-night-hoodie.png",
+      "optimized": "../images/editorial/01-night-hoodie.webp"
+    },
+    {
+      "name": "02-daily-tee",
+      "prompt": "Photorealistic Japanese streetwear product editorial for the HH:DK homepage. Square photograph, one clean hero product on an adult Japanese fashion model, not a catalog cutout. Approved VIS moodboard is style reference ONLY. Second image is the EXACT cream HH:DK brand wordmark to reproduce faithfully as garment print or embroidery: both H and D/K uppercase, two circular colon dots, wide rounded geometric silhouette. Preserve its custom letter shapes, never replace with generic typeset. Refined black/cream wardrobe, a tiny vermilion detail, rich natural textile texture, understated Tokyo backstreet, soft premium light, realistic natural skin, product tack sharp, softly defocused city, spacious and uncluttered. No captions, frame, collage, watermarks or other brands. Main logo and full product unobstructed within central 75% of frame. Rear three-quarter portrait of adult woman with tied dark hair wearing heavyweight warm ivory oversized T-shirt, black exact HH:DK wordmark across back. Early evening Japanese concrete storefront, warm grey textures, a discreet red street pole, cool editorial light. Frame head to hip, tee completely visible, natural relaxed pose.",
+      "source": "exec-91ca9c39-7cb9-4168-bbd5-9d274a0dcc8e.png",
+      "original": "02-daily-tee.png",
+      "optimized": "../images/editorial/02-daily-tee.webp"
+    },
+    {
+      "name": "03-city-bag",
+      "prompt": "Photorealistic Japanese streetwear product editorial for the HH:DK homepage. Square photograph, one clean hero product on an adult Japanese fashion model, not a catalog cutout. Approved VIS moodboard is style reference ONLY. Second image is the EXACT cream HH:DK brand wordmark to reproduce faithfully as garment print or embroidery: both H and D/K uppercase, two circular colon dots, wide rounded geometric silhouette. Preserve its custom letter shapes, never replace with generic typeset. Refined black/cream wardrobe, a tiny vermilion detail, rich natural textile texture, understated Tokyo backstreet, soft premium light, realistic natural skin, product tack sharp, softly defocused city, spacious and uncluttered. No captions, frame, collage, watermarks or other brands. Main logo and full product unobstructed within central 75% of frame. Close waist-to-shoulder editorial crop of adult in ivory tee and charcoal wide-leg trousers, wearing a graphite nylon crossbody messenger bag. The bag is the large central subject with cream exact HH:DK wordmark printed across front, visible stitching and silver hardware, hand lightly touching strap, Japanese tiled backstreet in soft background. No head needed.",
+      "source": "exec-89de815a-b00a-45fd-a8f8-63a40fe01faf.png",
+      "original": "03-city-bag.png",
+      "optimized": "../images/editorial/03-city-bag.webp"
+    },
+    {
+      "name": "04-daily-cap",
+      "prompt": "Photorealistic Japanese streetwear product editorial for the HH:DK homepage. Square photograph, one clean hero product on an adult Japanese fashion model, not a catalog cutout. Approved VIS moodboard is style reference ONLY. Second image is the EXACT cream HH:DK brand wordmark to reproduce faithfully as garment print or embroidery: both H and D/K uppercase, two circular colon dots, wide rounded geometric silhouette. Preserve its custom letter shapes, never replace with generic typeset. Refined black/cream wardrobe, a tiny vermilion detail, rich natural textile texture, understated Tokyo backstreet, soft premium light, realistic natural skin, product tack sharp, softly defocused city, spacious and uncluttered. No captions, frame, collage, watermarks or other brands. Main logo and full product unobstructed within central 75% of frame. Close three-quarter portrait of adult woman wearing a soft black washed cotton baseball cap with clearly visible cream embroidered EXACT HH:DK wordmark on front panel. Cap is main subject, head slightly angled down so front emblem is visible. Ivory overshirt, soft muted Japanese alley, subtle red light in blurred background, elegant natural skin and realistic threads.",
+      "source": "exec-af73c7d3-b167-4fee-9966-ef5a6de82798.png",
+      "original": "04-daily-cap.png",
+      "optimized": "../images/editorial/04-daily-cap.webp"
+    },
+    {
+      "name": "05-city-layer",
+      "prompt": "Photorealistic Japanese streetwear product editorial for the HH:DK homepage. Square photograph, one clean hero product on an adult Japanese fashion model, not a catalog cutout. Approved VIS moodboard is style reference ONLY. Second image is the EXACT cream HH:DK brand wordmark to reproduce faithfully as garment print or embroidery: both H and D/K uppercase, two circular colon dots, wide rounded geometric silhouette. Preserve its custom letter shapes, never replace with generic typeset. Refined black/cream wardrobe, a tiny vermilion detail, rich natural textile texture, understated Tokyo backstreet, soft premium light, realistic natural skin, product tack sharp, softly defocused city, spacious and uncluttered. No captions, frame, collage, watermarks or other brands. Main logo and full product unobstructed within central 75% of frame. Three-quarter medium front view of adult man wearing roomy warm ivory canvas coach jacket, charcoal tee underneath and dark loose trousers. Modest black exact HH:DK wordmark at left chest, sleeve seam and tactile canvas in focus. Quiet Shibuya concrete and metal shutter backdrop after sunset, soft side lighting, subtle red zipper pull, jacket distinctly lighter than background.",
+      "source": "exec-ded3423d-6103-4444-8a3f-ffd8fd06bb58.png",
+      "original": "05-city-layer.png",
+      "optimized": "../images/editorial/05-city-layer.webp"
+    },
+    {
+      "name": "06-everyday-tote",
+      "prompt": "Photorealistic Japanese streetwear product editorial for the HH:DK homepage. Square photograph, one clean hero product on an adult Japanese fashion model, not a catalog cutout. Approved VIS moodboard is style reference ONLY. Second image is the EXACT cream HH:DK brand wordmark to reproduce faithfully as garment print or embroidery: both H and D/K uppercase, two circular colon dots, wide rounded geometric silhouette. Preserve its custom letter shapes, never replace with generic typeset. Refined black/cream wardrobe, a tiny vermilion detail, rich natural textile texture, understated Tokyo backstreet, soft premium light, realistic natural skin, product tack sharp, softly defocused city, spacious and uncluttered. No captions, frame, collage, watermarks or other brands. Main logo and full product unobstructed within central 75% of frame. Streetwear product editorial cropped from shoulders to knees of adult woman in charcoal jacket and ivory trousers carrying a warm ivory heavy canvas tote. Tote is large central hero with crisp black exact HH:DK approved wordmark on its front, rich woven fabric and natural folds. Clean Tokyo sidewalk and muted storefront, amber evening light, no crowd, natural candid stance.",
+      "source": "exec-a5fc37af-c7d8-4d3a-ae60-0fb68d3b2a4c.png",
+      "original": "06-everyday-tote.png",
+      "optimized": "../images/editorial/06-everyday-tote.webp"
+    }
+  ]
+}
