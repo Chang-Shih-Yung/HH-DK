@@ -26,6 +26,7 @@ export const frame = {
   street: null as THREE.Texture | null,
   /** Set by the picture planes: is one of them on screen right now? */
   photosOnScreen: null as (() => boolean) | null,
+  releasePhotos: null as (() => void) | null,
 };
 
 // Uniform objects shared by every material, so one write updates them all.

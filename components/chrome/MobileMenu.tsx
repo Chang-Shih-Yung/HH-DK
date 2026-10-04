@@ -6,7 +6,7 @@ import { LOCATION, NAV } from "@/lib/content";
 import { getScroller, lockScroll } from "@/lib/scroll";
 import { setUI, useUI } from "@/lib/store";
 import { NavItem } from "./NavItem";
-import { ModeToggle, SoundToggle } from "./Toggles";
+import { ModeToggle, SoundToggle, TiltToggle } from "./Toggles";
 
 const ITEMS = [{ id: "top", label: "HOME", aria: "Home" }, ...NAV];
 const close = () => setUI({ menuOpen: false });
@@ -15,6 +15,8 @@ const close = () => setUI({ menuOpen: false });
 // paused while it is open. Escape closes it; focus cannot leave the header and the menu.
 export function MobileMenu() {
   const open = useUI((s) => s.menuOpen);
+  const tilt = useUI((s) => s.tilt);
+  const soundError = useUI((s) => s.soundError);
   const panel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,10 +70,14 @@ export function MobileMenu() {
           <NavItem key={item.id} href={`#${item.id}`} label={item.label} ariaLabel={item.aria} instant onClick={close} />
         ))}
       </nav>
+      <p role="status" className="absolute inset-x-inset bottom-20 font-mono text-[11px] text-muted">
+        {soundError ? "Sound couldn’t start. Tap SOUND to try again." : tilt === "denied" ? "Motion access wasn’t allowed. Touch still works." : tilt === "unavailable" ? "Tilt isn’t available in this browser." : ""}
+      </p>
       <div className="absolute inset-x-inset bottom-[max(18px,env(safe-area-inset-bottom))] flex items-center justify-between text-[11px]">
         <span className="font-mono">{LOCATION.short}</span>
         <ModeToggle />
         <SoundToggle />
+        <TiltToggle />
       </div>
     </div>
   );

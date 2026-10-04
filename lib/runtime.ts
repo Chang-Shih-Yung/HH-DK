@@ -18,6 +18,10 @@ export const rt = {
   px: 0,
   py: 0,
   pointerOn: false,
+  /** Calibrated sensor input, separate from touch so tilting never injects water drops. */
+  tiltOn: false,
+  tiltX: 0,
+  tiltY: 0,
   /** Set by a press or tap, consumed by the water simulation. */
   tap: false,
   /** Bumped whenever something a rendered frame depends on has changed. */

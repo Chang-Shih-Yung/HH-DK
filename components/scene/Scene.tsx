@@ -62,6 +62,7 @@ function Driver({ wrap }: { wrap: RefObject<HTMLDivElement | null> }) {
     const onLost = (e: Event) => {
       e.preventDefault();
       lost = true;
+      frame.releasePhotos?.();
     };
     const onRestored = () => {
       lost = false;
@@ -108,8 +109,9 @@ function Driver({ wrap }: { wrap: RefObject<HTMLDivElement | null> }) {
       frame.settling = false;
 
       // Pointer tilt, eased; shared by the logo and the arrow.
-      const tx = state.reduced || !rt.pointerOn ? 0 : (1 - (rt.py / rt.h) * 2) * 0.035;
-      const ty = state.reduced || !rt.pointerOn ? 0 : ((rt.px / rt.w) * 2 - 1) * 0.045;
+      const sensor = rt.tiltOn && !rt.pointerOn;
+      const tx = state.reduced ? 0 : rt.pointerOn ? (1 - (rt.py / rt.h) * 2) * 0.035 : sensor ? -rt.tiltY * 0.035 : 0;
+      const ty = state.reduced ? 0 : rt.pointerOn ? ((rt.px / rt.w) * 2 - 1) * 0.045 : sensor ? rt.tiltX * 0.045 : 0;
       const ease = 1 - Math.pow(0.93, dt * 60);
       frame.tiltX += (tx - frame.tiltX) * ease;
       frame.tiltY += (ty - frame.tiltY) * ease;
@@ -118,8 +120,8 @@ function Driver({ wrap }: { wrap: RefObject<HTMLDivElement | null> }) {
       // The lamp follows the pointer. With no pointer (phones, or the mouse has left) it
       // drifts on its own over the first screen, and rests while the arrow section is up.
       const still = state.reduced;
-      const lampX = rt.pointerOn ? rt.px : heroOn && !still ? rt.w * (0.52 + 0.3 * Math.cos(time * 0.45)) : rt.w * 0.34;
-      const lampY = rt.pointerOn ? rt.py : heroOn && !still ? rt.h * (0.42 + 0.16 * Math.sin(time * 0.62)) : rt.h * 0.3;
+      const lampX = rt.pointerOn ? rt.px : sensor && !still ? rt.w * (0.5 + rt.tiltX * 0.32) : heroOn && !still ? rt.w * (0.52 + 0.3 * Math.cos(time * 0.45)) : rt.w * 0.34;
+      const lampY = rt.pointerOn ? rt.py : sensor && !still ? rt.h * (0.42 + rt.tiltY * 0.25) : heroOn && !still ? rt.h * (0.42 + 0.16 * Math.sin(time * 0.62)) : rt.h * 0.3;
       if (!lampPlaced) {
         lampPlaced = true;
         frame.lampX = lampX;
@@ -228,7 +230,7 @@ function HeroObjects() {
   return hero ? <primitive object={hero.group} /> : null;
 }
 
-// Desktop: the page's pictures, re-drawn here so they bend in the lens bands.
+// Edge-lens photographs; phones keep native images everywhere else.
 function PhotoObjects() {
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
@@ -239,10 +241,12 @@ function PhotoObjects() {
     photos.current = instance;
     scene.add(instance.group);
     frame.photosOnScreen = instance.onScreen;
+    frame.releasePhotos = instance.release;
     markDirty();
     wake();
     return () => {
       frame.photosOnScreen = null;
+      frame.releasePhotos = null;
       photos.current = null;
       scene.remove(instance.group);
       instance.dispose();

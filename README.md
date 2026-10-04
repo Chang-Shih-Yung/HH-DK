@@ -18,6 +18,7 @@ Production and checks:
 ```sh
 npm run typecheck
 npm run lint
+node --test tests/mobile-effects.test.mjs
 npm run build
 npm run start
 ```
@@ -36,9 +37,21 @@ npm run start
 - `public/`: compressed model and textures used by the live page.
 
 Reduced motion keeps a static composition. WebGL failures retain a readable 2D
-logo. Mobile uses DOM product photographs and a hamburger menu; desktop product
-effects release offscreen texture copies. The closing horizontal 3D wordmark
+logo. Mobile uses DOM product photographs and a hamburger menu; only pictures in
+the two edge-lens bands receive capped 512px GPU copies, freed as they leave the
+bands. Desktop effects also release offscreen texture copies. The closing horizontal 3D wordmark
 reuses the opening geometry and textures instead of downloading another model.
+
+`TILT` in the mobile menu enables calibrated orientation lighting. Permission is
+requested directly from the tap where the browser requires it. A single sensor
+listener runs only in visible 3D sections, pauses for menus/dialogs/reduced motion,
+and recalibrates after screen rotation. Sensor values stay in memory.
+
+`SOUND` starts an HTML audio loop directly from the tap, avoiding asynchronous
+module loading before mobile playback activation. The 229 KiB AAC asset is the
+original synthesized composition rendered offline by `scripts/render-audio.mjs`.
+It is fetched only on activation. Playback pauses in hidden pages, reuses one
+player and reports a blocked/failed start instead of showing a false on state.
 
 Approved VIS boards, previous proposals and original generated PNGs stay local
 and are excluded from Git and deployment. The published assets are already

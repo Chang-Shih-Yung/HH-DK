@@ -7,6 +7,8 @@ import { markDirty, rt } from "@/lib/runtime";
 import { scrollToId } from "@/lib/scroll";
 import { setMode, setUI, ui } from "@/lib/store";
 import { wake } from "@/lib/ticker";
+import { mountTilt } from "@/lib/tilt";
+import { mountAudioLifecycle, toggleSound } from "@/lib/audio";
 
 // Page-wide wiring, registered once: device hints, the pointer, in-page links and
 // keyboard shortcuts. Every listener here is passive or delegated, and none sets React state
@@ -14,6 +16,8 @@ import { wake } from "@/lib/ticker";
 export function Runtime() {
   useEffect(() => {
     const off = new AbortController();
+    const offTilt = mountTilt();
+    const offAudio = mountAudioLifecycle();
     const on = <K extends keyof WindowEventMap>(type: K, fn: (e: WindowEventMap[K]) => void, passive = true) =>
       window.addEventListener(type, fn, { passive, signal: off.signal });
 
@@ -73,12 +77,12 @@ export function Runtime() {
         else if (key === "b") scrollToId("end");
         else if (key === "d") setMode("dark");
         else if (key === "l") setMode("light");
-        else if (key === "s") import("@/lib/audio").then((m) => m.toggleSound()).catch(() => {});
+        else if (key === "s") toggleSound();
       },
       false,
     );
 
-    return () => off.abort();
+    return () => { off.abort(); offTilt(); offAudio(); };
   }, []);
 
   return null;

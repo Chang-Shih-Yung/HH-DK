@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       {
         // Scene assets: cached for an hour and refreshed in the background, so a replaced
         // sticker or texture still reaches returning visitors the same day.
-        source: "/:dir(models|textures|stickers|brand)/:file*",
+        source: "/:dir(models|textures|stickers|brand|audio)/:file*",
         headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
       },
     ];

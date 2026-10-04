@@ -11,6 +11,10 @@ type UI = {
   mode: Mode;
   menuOpen: boolean;
   sound: boolean;
+  soundLoading: boolean;
+  soundError: boolean;
+  tilt: "off" | "asking" | "on" | "denied" | "unavailable";
+  tiltAvailable: boolean;
   /** The loader has lifted and the page is interactive. */
   entered: boolean;
   /** The WebGL hero has drawn its first frame. */
@@ -30,6 +34,10 @@ export const useUI = create<UI>(() => ({
   mode: "dark",
   menuOpen: false,
   sound: false,
+  soundLoading: false,
+  soundError: false,
+  tilt: "off",
+  tiltAvailable: false,
   entered: false,
   sceneReady: false,
   sceneFailed: false,

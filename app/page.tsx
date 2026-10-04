@@ -1,5 +1,4 @@
 import { preload } from "react-dom";
-import { PictureLens } from "@/components/app/PictureLens";
 import { Runtime } from "@/components/app/Runtime";
 import { Scroller } from "@/components/app/Scroller";
 import { Cursor } from "@/components/chrome/Cursor";
@@ -48,7 +47,6 @@ export default function Home() {
       </div>
       <Cursor />
       <Lightbox />
-      <PictureLens />
       <Runtime />
     </>
   );
