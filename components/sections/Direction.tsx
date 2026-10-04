@@ -68,7 +68,7 @@ export function Direction() {
       style={{ height: `calc(var(--vh, 100svh) * ${1 + DIRECTION.travel})` } as CSSProperties}
     >
       <div className="sticky top-0 h-view overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center text-center">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-center">
           <p ref={kicker} className="absolute left-inset top-[110px] font-mono text-[10px] text-muted sm:top-[105px] sm:text-xs">
             03 / A LITTLE DIRECTION
           </p>
@@ -104,7 +104,7 @@ export function Direction() {
           >
             <span className={sceneReady ? "invisible" : ""}><Wordmark /></span>
           </a>
-          <h2 ref={tagline} className="absolute inset-x-inset top-[47%] text-center text-[11.4vw] font-bold leading-[1.08] tracking-[-0.018em] opacity-0 sm:top-[43%] sm:text-[clamp(56px,7.4vw,112px)]">
+          <h2 ref={tagline} className="pointer-events-none absolute inset-x-inset top-[47%] text-center text-[11.4vw] font-bold leading-[1.08] tracking-[-0.018em] opacity-0 sm:top-[43%] sm:text-[clamp(56px,7.4vw,112px)]">
             <span className="block">A LITTLE<span className="block sm:inline"> STREET.</span></span>
             <span className="block">EVERY DAY.</span>
           </h2>
