@@ -1,11 +1,9 @@
 import * as THREE from "three";
-import { BREAKPOINT_MOBILE, LOGO } from "@/lib/config";
+import { BREAKPOINT_MOBILE, DIRECTION, LOGO } from "@/lib/config";
 import { directionProgress, rt, smooth } from "@/lib/runtime";
 import { ui } from "@/lib/store";
 import { createGlassMaterial } from "./materials";
 import { frame } from "./state";
-
-const PAGE = { dark: new THREE.Color("#0c0d0f"), light: new THREE.Color("#edece7") };
 
 /** One centred arrow: diagonal-axis rotation at the hero, then a small-to-large
  * scroll entrance in the closing sequence. */
@@ -31,8 +29,7 @@ export function createArrow() {
 
   const material = createGlassMaterial(null, 0, true);
   // Both appearances use the special red: 90% pigment, 10% refracted backdrop.
-  material.uniforms.uPigmentNight.value = 0.9;
-  material.uniforms.uPigmentDay.value = 0.9;
+  material.uniforms.uPigment.value = 0.9;
   const mesh = new THREE.Mesh(geometry, material);
   const group = new THREE.Group();
   group.add(mesh);
@@ -44,7 +41,6 @@ export function createArrow() {
     const still = ui().reduced;
     const mobile = rt.w <= BREAKPOINT_MOBILE;
     const u = material.uniforms;
-    u.uPage.value.copy(ui().mode === "light" ? PAGE.light : PAGE.dark);
 
     // ── Beside the logo on the first screen ──
     if (frame.heroOn && frame.street) {
@@ -78,6 +74,8 @@ export function createArrow() {
     group.visible = frame.directionOn;
     if (!frame.directionOn) return;
     const p = directionProgress();
+    // The departing arrow no longer submits a giant, invisible plane at the footer.
+    if (p >= DIRECTION.arrowOut[1]) { group.visible = false; return; }
     // While the section is still scrolling in, the pinned box has not reached the top yet.
     const boxTop = Math.max(0, rt.dirTop - rt.scroll);
     const arrive = still ? 1 : smooth(0, 0.28, p);
@@ -91,7 +89,7 @@ export function createArrow() {
     rotation.setFromAxisAngle(axis, -(turn * Math.PI * 1.8 + leave * 0.6));
     mesh.quaternion.premultiply(rotation);
     u.uBackdropMix.value = 0;
-    u.uDissolve.value = smooth(0.50, 0.62, p);
+    u.uDissolve.value = smooth(...DIRECTION.arrowOut, p);
   }
 
   return {

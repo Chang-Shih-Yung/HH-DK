@@ -12,7 +12,8 @@ const enter = () => setUI({ entered: true });
 // limit, on SKIP, at once for reduced motion — and by CSS alone if scripts fail.
 export function Loader() {
   const entered = useUI((s) => s.entered);
-  const done = useUI((s) => s.sceneReady || s.sceneFailed || s.reduced);
+  const done = useUI((s) => s.sceneReady || s.sceneFailed || s.reduced ||
+    ((s.section === "edit" || s.section === "street") && s.progress >= 0.94));
   const root = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLElement>(null);
   const percent = useRef<HTMLSpanElement>(null);

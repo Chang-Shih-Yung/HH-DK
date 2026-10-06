@@ -57,7 +57,6 @@ const STREET = /* glsl */ `
 uniform sampler2D uStreet;
 uniform float uAspect;
 uniform float uImageAspect;
-uniform float uLight;
 vec3 hhdkStreet(vec2 uv) {
   float ratio = uAspect / uImageAspect;
   if (ratio < 1.0) uv.x = (uv.x - 0.5) * ratio + 0.5;
@@ -71,9 +70,7 @@ vec3 hhdkTone(vec3 city, vec2 uv, float broad, float gloss) {
   float vignette = 1.0 - smoothstep(0.05, 0.7, length((uv - 0.5) * vec2(1.0, 0.8)));
   vec3 dark = mix(vec3(0.006, 0.008, 0.010), vec3(0.014, 0.018, 0.022), broad) + gloss;
   dark += city * (0.025 + 0.045 * vignette);
-  vec3 light = mix(vec3(0.72, 0.71, 0.66), vec3(0.82, 0.81, 0.76), broad);
-  light = mix(light, city * 0.62 + vec3(0.23, 0.22, 0.20), 0.38);
-  return mix(dark, light, uLight);
+  return dark;
 }
 `;
 
@@ -237,8 +234,7 @@ export function createGlassMaterial(street: THREE.Texture | null, backdropMix: n
       uTintRim: { value: LOGO.tintRim },
       uSkin: { value: LOGO.skin },
       uSpecial: { value: new THREE.Color(LOGO.tint) },
-      uPigmentNight: { value: 0 },
-      uPigmentDay: { value: 0.9 },
+      uPigment: { value: 0 },
     },
     vertexShader: /* glsl */ `
 varying vec3 vNormal;
@@ -253,7 +249,7 @@ uniform vec2 uResolution, uBend, uLamp;
 uniform float uBackdropMix, uTintRim, uSkin, uLampHeight, uLampRange, uLampPower, uOpacity;
 uniform vec3 uPage, uTint;
 uniform vec3 uSpecial;
-uniform float uPigmentNight, uPigmentDay;
+uniform float uPigment;
 uniform float uEmblemCount;
 ${emblems}
 ${COVER}
@@ -275,7 +271,7 @@ void main() {
   float edge = 1.0 - facing;
   float fresnel = 0.05 + 0.95 * pow(edge, 4.0);
   // The skin colour: white pulled a little towards the brand red.
-  float rose = uSkin * mix(1.0, 1.8, uLight);
+  float rose = uSkin;
   vec3 skin = mix(vec3(1.0), vec3(1.0, 0.72, 0.68), rose);
 
   // What lies behind, bent by the surface; the glass is dense, so it darkens a little,
@@ -284,17 +280,17 @@ void main() {
   vec2 uv = screen - n.xy * uBend * (0.35 + 0.65 * edge);
   vec3 behind = mix(uPage, hhdkTone(hhdkStreet(uv), uv, 0.5, 0.0), uBackdropMix);
   ${refractEmblems}
-  vec3 body = behind * mix(0.96, 0.7, edge) * skin + uTint * rose * mix(0.014 + 0.035 * edge, 0.075, uLight);
+  vec3 body = behind * mix(0.96, 0.7, edge) * skin + uTint * rose * (0.014 + 0.035 * edge);
   // Opaque pigment with a small amount of glass beneath, using the VIS special colour.
-  float pigment = mix(uPigmentNight, uPigmentDay, uLight);
-  body = mix(body, uSpecial * (0.36 + facing * 0.58), pigment);
+  body = mix(body, uSpecial * (0.36 + facing * 0.58), uPigment);
 
   // The room in the mirror direction.
   vec3 r = reflect(vec3(0.0, 0.0, -1.0), n);
-  vec3 room = vec3(0.12) + vec3(0.26) * smoothstep(-0.4, 1.0, r.y);
-  room += vec3(0.8) * card(r, normalize(vec3(-0.5, 0.6, 0.62)), vec2(0.9, 0.6), 0.5);
-  room += vec3(5.0) * card(r, normalize(vec3(-0.62, 0.74, -0.05)), vec2(0.95, 0.11), 0.085);
-  room += vec3(2.6) * card(r, normalize(vec3(0.3, 0.92, 0.12)), vec2(1.2, 0.075), 0.065);
+  vec3 room = vec3(0.08) + vec3(0.18) * smoothstep(-0.4, 1.0, r.y);
+  room += vec3(0.6) * card(r, normalize(vec3(-0.5, 0.6, 0.62)), vec2(0.9, 0.6), 0.5);
+  room += vec3(8.0) * card(r, normalize(vec3(-0.58, 0.72, 0.34)), vec2(0.85, 0.075), 0.045);
+  room += vec3(5.4) * card(r, normalize(vec3(0.60, 0.56, 0.18)), vec2(1.0, 0.050), 0.032);
+  room += vec3(6.5) * pow(max(dot(r, normalize(vec3(-0.36, 0.58, 0.73))), 0.0), 240.0);
   room *= skin;
   room += uTint * 26.0 * uTintRim * card(r, normalize(vec3(0.7, -0.6, -0.08)), vec2(0.7, 0.05), 0.03);
 
@@ -306,7 +302,7 @@ void main() {
   vec3 l = toLamp / lampDistance;
   float reach = 1.0 / (1.0 + pow(lampDistance / uLampRange, 2.0));
   float nh = max(dot(n, normalize(l + vec3(0.0, 0.0, 1.0))), 0.0);
-  float lamp = ((pow(nh, 55.0) * 0.38 + pow(nh, 240.0) * 0.55) * reach + max(dot(n, l), 0.0) * reach * reach * 0.17) * uLampPower;
+  float lamp = ((pow(nh, 65.0) * 0.45 + pow(nh, 360.0) * 2.0) * reach + max(dot(n, l), 0.0) * reach * reach * 0.12) * uLampPower;
 
   vec3 color = body * (1.0 - fresnel) + room * fresnel + vec3(1.0, 0.97, 0.94) * lamp;
   ${OUTPUT}

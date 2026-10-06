@@ -3,7 +3,7 @@ import { Wordmark } from "@/components/ui/Wordmark";
 import { BottomBar } from "./BottomBar";
 import { MenuButton } from "./MenuButton";
 import { NavItem } from "./NavItem";
-import { ModeToggle, SoundToggle } from "./Toggles";
+import { SoundToggle } from "./Toggles";
 
 // Fixed frame around the page: brand and navigation above, location and globe below.
 // The frame itself ignores the pointer; only its controls take it.
@@ -24,7 +24,6 @@ export function Header() {
           {NAV.map((item) => (
             <NavItem key={item.id} href={`#${item.id}`} label={item.label} ariaLabel={item.aria} />
           ))}
-          <ModeToggle />
           <SoundToggle />
         </nav>
         <MenuButton />

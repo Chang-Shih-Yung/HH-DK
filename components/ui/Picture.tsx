@@ -39,7 +39,7 @@ export function Picture({ image, alt, title, label, sizes, square, focus }: Prop
       />
       <span
         aria-hidden="true"
-        className="absolute bottom-[9px] right-[9px] grid h-[27px] w-[27px] place-items-center rounded-full border border-white/35 text-[17px] text-white transition-colors duration-200 group-hover:bg-cream group-hover:text-[#111] sm:bottom-[15px] sm:right-4 sm:h-8 sm:w-8 sm:text-[19px]"
+        className="absolute bottom-[9px] right-[9px] z-[1] grid h-[27px] w-[27px] place-items-center rounded-full border border-white/35 text-[17px] text-white transition-colors duration-200 group-hover:bg-cream group-hover:text-[#111] sm:bottom-[15px] sm:right-4 sm:h-8 sm:w-8 sm:text-[19px]"
       >
         ↗
       </span>

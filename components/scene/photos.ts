@@ -12,8 +12,8 @@ type Entry = {
   mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial> | null;
   texture: THREE.Texture | null; over: boolean; hover: number;
 };
-// On phones only photographs crossing either edge lens get a GPU copy. Centre pictures
-// stay native. Uploads reuse the decoded image, with no second request, and are capped.
+// Desktop photo planes. Phone photographs stay in the native compositor scroll layer;
+// they never allocate canvas copies or GPU textures in this scene.
 export function createPhotos(gl: THREE.WebGLRenderer) {
   const group = new THREE.Group();
   const coarse = matchMedia("(pointer: coarse)").matches;
@@ -75,7 +75,7 @@ export function createPhotos(gl: THREE.WebGLRenderer) {
     group,
     release() { entries.forEach(release); },
     onScreen() {
-      if (ui().reduced || ui().sceneFailed) {
+      if (handheld() || ui().reduced || ui().sceneFailed) {
         if (enabled) entries.forEach(release); enabled = false; return false;
       }
       measure(); enabled = true;

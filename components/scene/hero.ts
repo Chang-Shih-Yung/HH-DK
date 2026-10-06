@@ -8,6 +8,7 @@ import { createBackdropMaterial, createGlassMaterial, createStickerMaterial } fr
 import { createBodies, stepBodies, type Body, type World } from "./physics";
 import { frame } from "./state";
 import { horizontalGeometry } from "./horizontal";
+import { closingMotion, emblemDepth } from "@/lib/closing-motion";
 
 export type HeroAssets = { logo: THREE.BufferGeometry; street: THREE.Texture; stickers: THREE.Texture[] };
 
@@ -92,6 +93,7 @@ export function createHero(gl: THREE.WebGLRenderer, assets: HeroAssets) {
     return mesh;
   });
   let closingBuiltFor = "";
+  let closingFall = 0;
   let waterPhase: "hero" | "closing" | null = null;
   const world: World = { w: 1, h: 1, mobile: false, logoX: 0, logoY: 0, logoScale: 1, time: 0 };
   let bodies: Body[] = [];
@@ -137,10 +139,11 @@ export function createHero(gl: THREE.WebGLRenderer, assets: HeroAssets) {
     const p = directionProgress();
     const ending = frame.directionOn ? smooth(...DIRECTION.streetIn, p) : 0;
     const reveal = frame.directionOn ? smooth(...DIRECTION.brandIn, p) : 0;
+    const stamps = frame.directionOn ? smooth(...DIRECTION.stickersIn, p) : 0;
     group.visible = frame.heroOn || ending > 0;
     logo.visible = frame.heroOn;
     closingLogo.visible = !frame.heroOn && reveal > 0;
-    for (const mesh of closingMeshes) mesh.visible = closingLogo.visible;
+    for (const mesh of closingMeshes) mesh.visible = !frame.heroOn && stamps > 0;
     if (rt.w === 0 || !group.visible) return;
     for (const mesh of meshes) mesh.visible = frame.heroOn;
     const envelope = backdropMaterial.uniforms;
@@ -148,22 +151,24 @@ export function createHero(gl: THREE.WebGLRenderer, assets: HeroAssets) {
     envelope.uOpacity.value = 1;
     if (!frame.heroOn) {
       // Reuse the first screen's small water simulation, never a second canvas/pass chain.
-      if (waterPhase !== "closing") { fluid.reset(); waterPhase = "closing"; }
+      if (waterPhase !== "closing") { rt.tap = false; fluid.reset(); waterPhase = "closing"; }
       fluid.step(frame.dt, ui().reduced);
       envelope.uWater.value = fluid.texture;
       envelope.uTime.value = frame.time;
       envelope.uMotion.value = ui().reduced ? 0 : 1;
       envelope.uAspect.value = rt.w / rt.h;
-      if (!closingLogo.visible) return;
       const mobile = rt.w <= BREAKPOINT_MOBILE;
       const inset = mobile ? 26 : Math.min(70, Math.max(24, rt.w * 0.04)) + 8;
       const scale = (rt.w - inset * 2) / 858;
-      closingLogo.scale.setScalar(scale * (0.94 + reveal * 0.06));
+      closingLogo.scale.setScalar(scale * (0.82 + reveal * 0.18));
       closingLogo.position.set(0, rt.h * (mobile ? 0.12 : 0.10), 120);
-      closingLogo.rotation.set(0.08 + frame.tiltX,
-        frame.tiltY - (ui().reduced ? 0 : (1 - reveal) * 0.75),
-        ui().reduced ? 0 : -0.08 + reveal * 0.06);
-      closingGlass.uniforms.uOpacity.value = reveal;
+      const turn = closingMotion(p, 0, ui().reduced).turn;
+      closingLogo.rotation.set(0.14 - turn * 0.06 + frame.tiltX,
+        frame.tiltY - 1.1 + turn * 1.2,
+        0.20 * (1 - turn) - 0.03);
+      // The halftone mask already fades the surface. A second opacity fade delayed its
+      // visible entrance until after the preceding copy had completely disappeared.
+      closingGlass.uniforms.uOpacity.value = 1;
       closingGlass.uniforms.uDissolve.value = 1 - reveal;
       closingGlass.uniforms.uAspect.value = rt.w / rt.h;
       closingGlass.uniforms.uBend.value.set((LOGO.bend * scale) / rt.w, (LOGO.bend * scale) / rt.h);
@@ -176,20 +181,36 @@ export function createHero(gl: THREE.WebGLRenderer, assets: HeroAssets) {
         closingWorld.mobile = mobile;
         closingBodies = createBodies(2, closingWorld, Math.random);
         closingBodies.forEach((body, i) => {
-          body.x = rt.w * (i ? 0.73 : 0.24);
-          body.y = rt.h * (i ? 0.27 : 0.12);
+          body.kind = i ? 1 : 4;
+          const spec = STICKER_KINDS[body.kind];
+          body.w = mobile ? spec.mobileW : spec.w;
+          body.h = mobile ? spec.mobileH : spec.h;
+          body.r = Math.max(body.w, body.h) * 0.4;
+          body.x = rt.w * (i ? 0.63 : 0.37);
+          body.y = rt.h * (mobile ? 0.38 : 0.40);
+          body.a = i ? 0.10 : -0.12;
+          body.drift = body.vx = i ? 4 : -4;
+          body.fall = body.vy = 14 + i * 4;
         });
       }
       closingWorld.time = frame.time;
-      if (!ui().reduced) stepBodies(closingBodies, frame.dt, closingWorld, Math.random);
-      for (const material of closingStickers) material.uniforms.uOpacity.value = reveal;
+      // Keep emblems waiting in the glass during the scroll entrance. After the throw
+      // settles, the two existing sprites drift down slowly; reversing scroll resets it.
+      if (p < 0.95 || ui().reduced) closingFall = 0;
+      else closingFall += frame.dt;
+      for (const material of closingStickers) material.uniforms.uOpacity.value = stamps;
       closingMeshes.forEach((mesh, i) => {
         const body = closingBodies[i];
         mesh.material = closingStickers[body.kind];
         mesh.userData.kind = body.kind;
         mesh.scale.set(body.w, body.h, 1);
-        mesh.position.set(body.x - rt.w / 2, rt.h / 2 - body.y, 20);
-        mesh.rotation.z = -body.a;
+        const fling = closingMotion(p, i, ui().reduced);
+        const span = rt.h + body.h * 2 + 24;
+        let y = body.y + fling.y * rt.h + closingFall * body.fall;
+        if (y > rt.h + body.h + 24) y = ((y + body.h) % span) - body.h;
+        const drift = ui().reduced ? 0 : Math.sin(frame.time * 0.4 + i) * 3;
+        mesh.position.set(body.x + fling.x * rt.w + drift - rt.w / 2, rt.h / 2 - y, emblemDepth(rt.w));
+        mesh.rotation.z = -body.a + fling.angle + (i ? -1 : 1) * closingFall * 0.08;
         syncGlass(closingGlass, mesh, i);
       });
       return;
@@ -201,7 +222,7 @@ export function createHero(gl: THREE.WebGLRenderer, assets: HeroAssets) {
     const heroH = rt.heroH;
 
     // Water.
-    if (waterPhase !== "hero") { fluid.reset(); waterPhase = "hero"; }
+    if (waterPhase !== "hero") { rt.tap = false; fluid.reset(); waterPhase = "hero"; }
     fluid.step(dt, still);
     const b = backdropMaterial.uniforms;
     b.uWater.value = fluid.texture;
@@ -217,11 +238,11 @@ export function createHero(gl: THREE.WebGLRenderer, assets: HeroAssets) {
     logo.scale.setScalar(scale);
     logo.position.set(cx - rt.w / 2, rt.h / 2 - (cy - rt.scroll), 120);
     // It turns a little as the first screen dissolves away.
-    const out = frame.dissolve;
+    const turn = still ? 0 : smooth(0, heroH * 0.56, rt.scroll);
     logo.rotation.set(
-      0.07 + frame.tiltX,
-      -0.055 + frame.tiltY + out * 0.52,
-      -0.04 + (still ? 0 : Math.sin(time * 0.2) * 0.012),
+      0.07 + frame.tiltX + turn * 0.10,
+      -0.055 + frame.tiltY + turn * 1.05,
+      -0.04 + turn * 0.07 + (still ? 0 : Math.sin(time * 0.2) * 0.012),
     );
     frame.logoX = cx;
     frame.logoY = cy;
@@ -243,7 +264,7 @@ export function createHero(gl: THREE.WebGLRenderer, assets: HeroAssets) {
         if (!spot) return;
         const [x, y, angle, anchor] = mobile ? spot.mobile : spot.desktop;
         const centre = x * rt.w + (anchor * bodies[i].w) / 2;
-        mesh.position.set(centre - rt.w / 2, rt.h / 2 - (y * heroH + bodies[i].h / 2 - rt.scroll), 20 + i);
+        mesh.position.set(centre - rt.w / 2, rt.h / 2 - (y * heroH + bodies[i].h / 2 - rt.scroll), emblemDepth(rt.w) + i);
         mesh.rotation.z = (-angle * Math.PI) / 180;
         syncGlass(glass, mesh, i);
       });
@@ -262,7 +283,7 @@ export function createHero(gl: THREE.WebGLRenderer, assets: HeroAssets) {
       const mesh = meshes[i];
       if (mesh.userData.kind !== body.kind) dress(mesh, body);
       mesh.visible = true;
-      mesh.position.set(body.x - rt.w / 2, rt.h / 2 - (body.y - rt.scroll), 20 + i);
+      mesh.position.set(body.x - rt.w / 2, rt.h / 2 - (body.y - rt.scroll), emblemDepth(rt.w) + i);
       mesh.rotation.z = -body.a;
       syncGlass(glass, mesh, i);
     }

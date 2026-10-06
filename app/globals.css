@@ -49,13 +49,6 @@
   }
 }
 
-[data-mode="light"] {
-  --bg: #edece7;
-  --fg: #171819;
-  --muted: #65676a;
-  color-scheme: light;
-}
-
 @layer base {
   html,
   body {
@@ -127,6 +120,16 @@
 .grid-lines i {
   position: absolute;
   display: block;
+}
+
+.grid-v {
+  left: var(--x);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom,
+    var(--gl) calc(var(--row1) - 12px), transparent 0 calc(var(--row1) + 12px),
+    var(--gl) 0 calc(var(--row2) - 12px), transparent 0 calc(var(--row2) + 12px), var(--gl) 0);
 }
 
 .grid-h {
@@ -202,6 +205,37 @@
 
 .picture[data-gl="on"] img {
   opacity: 0;
+}
+
+/* Native mobile photo layers: horizontal strips bend at viewport edges while their
+   vertical position remains part of the browser's ordinary momentum scroll. */
+.picture[data-dom-lens="on"] {
+  overflow: visible;
+}
+.picture[data-dom-lens="on"] > img { opacity: 0; }
+.mobile-picture-lens {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.mobile-picture-strip {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  display: block;
+  background-repeat: no-repeat;
+  transform-origin: 50% 50%;
+}
+@supports (animation-timeline: view()) {
+  .mobile-picture-lens[data-timeline="css"] .mobile-picture-strip {
+    transform-origin: var(--lens-origin) 50%;
+    animation: mobile-edge-lens 1s linear both;
+    animation-timeline: view(block);
+  }
+}
+@keyframes mobile-edge-lens {
+  0%, 100% { transform: scaleX(var(--lens-peak, 1.06)); }
+  14%, 86% { transform: scaleX(1); }
 }
 
 /* ── Closing ────────────────────────────────────────────────────────────────

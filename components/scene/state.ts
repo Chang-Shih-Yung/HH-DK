@@ -34,7 +34,6 @@ export const shared = {
   uDissolve: { value: 0 },
   uPitch: { value: 6 },
   uResolution: { value: new THREE.Vector2(1, 1) },
-  uLight: { value: 0 },
   // The lamp that follows the pointer, in drawing-buffer pixels (origin bottom-left).
   uLamp: { value: new THREE.Vector2(0, 0) },
   uLampHeight: { value: 240 },

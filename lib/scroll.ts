@@ -25,7 +25,7 @@ export function scrollToId(id: string, immediate = false) {
   if (lenis) lenis.scrollTo(target, { immediate: instant, duration: 1.1, force: true });
   else {
     const top = typeof target === "number" ? target : target.offsetTop;
-    scroller.scrollTo({ top, behavior: instant ? "instant" : "smooth" });
+    scroller.scrollTo({ top, behavior: instant ? "auto" : "smooth" });
   }
   el?.focus({ preventScroll: true });
   history.replaceState(null, "", id === "top" ? location.pathname + location.search : `#${id}`);
@@ -35,7 +35,7 @@ export function scrollToId(id: string, immediate = false) {
 export function scrollBy(delta: number) {
   if (!scroller) return;
   if (lenis) lenis.scrollTo(lenis.targetScroll + delta, { immediate: ui().reduced, force: true });
-  else scroller.scrollBy({ top: delta, behavior: ui().reduced ? "instant" : "smooth" });
+  else scroller.scrollBy({ top: delta, behavior: ui().reduced ? "auto" : "smooth" });
   wake();
 }
 

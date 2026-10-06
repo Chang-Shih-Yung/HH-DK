@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" data-mode="dark" className={spaceMono.variable}>
+    <html lang="en" className={spaceMono.variable}>
       <body>{children}</body>
     </html>
   );

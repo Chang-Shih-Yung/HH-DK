@@ -8,7 +8,7 @@ import { addTask } from "@/lib/ticker";
 import { Wordmark } from "@/components/ui/Wordmark";
 
 // A pinned sequence scrubbed by scroll: the arrow self-rotates, the heading fades out,
-// a quiet gap follows, then the street and wordmark return. Only visible DOM is updated.
+// the street returns under the fading arrow, then the wordmark and closing copy follow.
 export function Direction() {
   const sceneReady = useUI((state) => state.sceneReady && !state.sceneFailed);
   const kicker = useRef<HTMLParagraphElement>(null);
@@ -23,19 +23,22 @@ export function Direction() {
 
   useEffect(() => {
     let shown = -1;
+    let wasReduced: boolean | undefined;
     let open: boolean | null = null;
+    let linksOpen: boolean | null = null;
     return addTask(() => {
       if (!closing.current || rt.dirH === 0) return;
       if (rt.scroll < rt.dirTop - rt.h || rt.scroll > rt.dirTop + rt.dirH) return;
       const p = directionProgress();
-      if (p === shown) return;
-      shown = p;
       const still = ui().reduced;
+      if (p === shown && still === wasReduced) return;
+      shown = p;
+      wasReduced = still;
       const rise = (from: number, to: number) => (still ? "none" : `translateY(${((1 - smooth(from, to, p)) * 105).toFixed(2)}%)`);
       // The heading hands over to the wordmark between these two points.
       const exit = smooth(...DIRECTION.headingOut, p);
       const swap = smooth(...DIRECTION.brandIn, p);
-      const leaving = 1 - smooth(0.52, 0.62, p);
+      const leaving = 1 - smooth(...DIRECTION.headingOut, p);
 
       kicker.current!.style.opacity = String(smooth(0, 0.08, p) * leaving);
       first.current!.style.transform = rise(0.08, 0.26);
@@ -45,16 +48,21 @@ export function Direction() {
       heading.current!.style.transform = still ? "none" : `scale(${(1 + exit * 0.025).toFixed(4)})`;
       brand.current!.style.opacity = String(swap);
       brand.current!.style.transform = `translateY(-50%) scale(${(still ? 1 : 0.95 + swap * 0.05).toFixed(4)})`;
-      const words = smooth(0.83, 0.99, p);
+      const words = smooth(...DIRECTION.wordsIn, p);
       tagline.current!.style.opacity = String(words);
       tagline.current!.style.transform = still ? "none" : `translateY(${(1 - words) * 16}px)`;
       links.current!.style.opacity = String(smooth(0.91, 1.0, p));
 
       // The closing links only take focus and clicks once they are on screen.
-      const ready = p > DIRECTION.brandIn[0];
+      const ready = swap > 0.15;
       if (ready !== open) {
         open = ready;
         closing.current.inert = !ready;
+      }
+      const navigable = p > 0.93;
+      if (navigable !== linksOpen) {
+        linksOpen = navigable;
+        links.current!.inert = !navigable;
       }
     });
   }, []);

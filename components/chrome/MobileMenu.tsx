@@ -6,7 +6,7 @@ import { LOCATION, NAV } from "@/lib/content";
 import { getScroller, lockScroll } from "@/lib/scroll";
 import { setUI, useUI } from "@/lib/store";
 import { NavItem } from "./NavItem";
-import { ModeToggle, SoundToggle, TiltToggle } from "./Toggles";
+import { SoundToggle, TiltToggle } from "./Toggles";
 
 const ITEMS = [{ id: "top", label: "HOME", aria: "Home" }, ...NAV];
 const close = () => setUI({ menuOpen: false });
@@ -75,7 +75,6 @@ export function MobileMenu() {
       </p>
       <div className="absolute inset-x-inset bottom-[max(18px,env(safe-area-inset-bottom))] flex items-center justify-between text-[11px]">
         <span className="font-mono">{LOCATION.short}</span>
-        <ModeToggle />
         <SoundToggle />
         <TiltToggle />
       </div>

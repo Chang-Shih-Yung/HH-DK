@@ -11,7 +11,7 @@ export function FallbackLogo() {
       className={`absolute left-[8%] top-[28%] w-[83%] -rotate-[4deg] opacity-25 sm:left-[29%] sm:top-[34%] sm:w-[48%] ${ready ? "invisible" : ""}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- a 2 KB decorative SVG, nothing to optimise */}
-      <img src="/brand/square-model.svg" alt="" className="w-full brightness-0 [html[data-mode=dark]_&]:invert" />
+      <img src="/brand/square-model.svg" alt="" className="w-full brightness-0 invert" />
     </div>
   );
 }

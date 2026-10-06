@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   // The dev badge sits exactly on the location label in the bottom-left corner.
   devIndicators: false,
   images: {
-    // AVIF first: the pictures are dark, low-contrast photographs, where it saves the most.
-    formats: ["image/avif", "image/webp"],
+    // These small editorial files favour inexpensive WebP preparation and decoding.
+    formats: ["image/webp"],
   },
   async headers() {
     return [

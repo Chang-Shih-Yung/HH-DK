@@ -1,5 +1,6 @@
 import { preload } from "react-dom";
 import { Runtime } from "@/components/app/Runtime";
+import { MobilePictureLens } from "@/components/app/MobilePictureLens";
 import { Scroller } from "@/components/app/Scroller";
 import { Cursor } from "@/components/chrome/Cursor";
 import { Grid } from "@/components/chrome/Grid";
@@ -29,7 +30,7 @@ export default function Home() {
       <div id="app">
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed inset-0 opacity-40 [background:radial-gradient(ellipse_at_75%_45%,#292c33_0%,var(--bg)_65%)] [html[data-mode=light]_&]:hidden"
+          className="pointer-events-none fixed inset-0 opacity-40 [background:radial-gradient(ellipse_at_75%_45%,#292c33_0%,var(--bg)_65%)]"
         />
         <SceneMount />
         <Scroller>
@@ -48,6 +49,7 @@ export default function Home() {
       <Cursor />
       <Lightbox />
       <Runtime />
+      <MobilePictureLens />
     </>
   );
 }

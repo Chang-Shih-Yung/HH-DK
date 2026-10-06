@@ -1,14 +1,12 @@
-// UI state that changes rarely (theme, menu, loading). Components subscribe to single
+// UI state that changes rarely (menu, sound, loading). Components subscribe to single
 // fields; anything per-frame lives in lib/runtime.ts instead.
 import { create } from "zustand";
 import type { Tier } from "./config";
 
-export type Mode = "dark" | "light";
 export type Section = "top" | "edit" | "street" | "direction" | "end";
 export type LightboxItem = { src: string; alt: string; title: string; width: number; height: number };
 
 type UI = {
-  mode: Mode;
   menuOpen: boolean;
   sound: boolean;
   soundLoading: boolean;
@@ -31,7 +29,6 @@ type UI = {
 };
 
 export const useUI = create<UI>(() => ({
-  mode: "dark",
   menuOpen: false,
   sound: false,
   soundLoading: false,
@@ -51,11 +48,3 @@ export const useUI = create<UI>(() => ({
 
 export const ui = useUI.getState;
 export const setUI = useUI.setState;
-
-export function setMode(mode: Mode) {
-  if (typeof document !== "undefined") {
-    document.documentElement.dataset.mode = mode;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", mode === "dark" ? "#0c0d0f" : "#edece7");
-  }
-  setUI({ mode });
-}

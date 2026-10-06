@@ -1,6 +1,6 @@
 # HH:DK
 
-A single-page visual prototype for HH:DK: Japanese streetwear, cream/charcoal,
+A single-page, night-only visual prototype for HH:DK: Japanese streetwear, cream/charcoal,
 vermilion, inflated glass typography and restrained motion. Product photographs
 are generated proposal imagery, not an inventory or storefront.
 
@@ -37,10 +37,19 @@ npm run start
 - `public/`: compressed model and textures used by the live page.
 
 Reduced motion keeps a static composition. WebGL failures retain a readable 2D
-logo. Mobile uses DOM product photographs and a hamburger menu; only pictures in
-the two edge-lens bands receive capped 512px GPU copies, freed as they leave the
-bands. Desktop effects also release offscreen texture copies. The closing horizontal 3D wordmark
+logo. Mobile uses native momentum scrolling and DOM photo strips, prepared in idle
+time near the viewport. CSS view timelines bend the strips at fixed screen edges
+where supported; a transform-only fallback preserves their native vertical scroll.
+No phone photographs are copied into the WebGL canvas. Far-offscreen strips are
+removed, and desktop effects release offscreen texture copies. The closing horizontal 3D wordmark
 reuses the opening geometry and textures instead of downloading another model.
+The closing street starts returning under the departing arrow and heading, before
+the horizontal mark and final copy appear. The shared timing applies on all devices.
+Invisible arrows stop drawing; invisible closing navigation stays inert.
+The straight grid is independent CSS chrome above the lens and scene. The opening
+mark turns during departure; the closing mark rotates in with two emblems already
+behind it, then a reversible scroll trajectory throws them outward. Brighter studio
+reflections and a focused moving specular light stay within the existing glass pass.
 
 `TILT` in the mobile menu enables calibrated orientation lighting. Permission is
 requested directly from the tap where the browser requires it. A single sensor

@@ -5,7 +5,7 @@ import { QUALITY } from "@/lib/config";
 import { detectTier } from "@/lib/quality";
 import { markDirty, rt } from "@/lib/runtime";
 import { scrollToId } from "@/lib/scroll";
-import { setMode, setUI, ui } from "@/lib/store";
+import { setUI, ui } from "@/lib/store";
 import { wake } from "@/lib/ticker";
 import { mountTilt } from "@/lib/tilt";
 import { mountAudioLifecycle, toggleSound } from "@/lib/audio";
@@ -65,7 +65,7 @@ export function Runtime() {
       { signal: off.signal },
     );
 
-    // Shortcuts: T top · B bottom · D dark · L light · S sound.
+    // Shortcuts: T top · B bottom · S sound.
     on(
       "keydown",
       (e) => {
@@ -75,8 +75,6 @@ export function Runtime() {
         const key = e.key.toLowerCase();
         if (key === "t") scrollToId("top");
         else if (key === "b") scrollToId("end");
-        else if (key === "d") setMode("dark");
-        else if (key === "l") setMode("light");
         else if (key === "s") toggleSound();
       },
       false,

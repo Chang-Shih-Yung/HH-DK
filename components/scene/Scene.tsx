@@ -26,7 +26,7 @@ export default function Scene() {
         frameloop="never"
         dpr={dpr}
         resize={{ scroll: false, debounce: 0 }}
-        camera={{ position: [0, 0, 1200], near: 1, far: 3000 }}
+        camera={{ position: [0, 0, 1200], near: 1, far: 6000 }}
         gl={{ antialias: true, alpha: true, stencil: false, powerPreference: "high-performance" }}
         style={{ pointerEvents: "none" }}
       >
@@ -73,7 +73,7 @@ function Driver({ wrap }: { wrap: RefObject<HTMLDivElement | null> }) {
     canvas.addEventListener("webglcontextrestored", onRestored);
     // An idle canvas must wake for a theme/dialog change as well as for scrolling.
     const offUI = useUI.subscribe((state, previous) => {
-      if (state.mode !== previous.mode || state.menuOpen !== previous.menuOpen ||
+      if (state.menuOpen !== previous.menuOpen ||
           state.lightbox !== previous.lightbox || state.reduced !== previous.reduced) {
         markDirty();
         wake();
@@ -142,7 +142,6 @@ function Driver({ wrap }: { wrap: RefObject<HTMLDivElement | null> }) {
       shared.uDissolve.value = frame.dissolve;
       shared.uPitch.value = HERO.dotPitch * ratio;
       shared.uResolution.value.set(canvas.width, canvas.height);
-      shared.uLight.value = state.mode === "light" ? 1 : 0;
 
       advance(time);
       draws++;
@@ -153,6 +152,8 @@ function Driver({ wrap }: { wrap: RefObject<HTMLDivElement | null> }) {
         canvas.dataset.textures = String(gl.info.memory.textures);
         canvas.dataset.geometries = String(gl.info.memory.geometries);
         canvas.dataset.dpr = String(ratio);
+        canvas.dataset.closing = directionOn ? directionProgress().toFixed(3) : "0";
+        canvas.dataset.streetReveal = directionOn ? smooth(...DIRECTION.streetIn, directionProgress()).toFixed(3) : "0";
       }
 
       if (continuous) {

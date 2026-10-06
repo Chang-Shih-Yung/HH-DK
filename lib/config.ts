@@ -69,7 +69,7 @@ export const LOGO = {
 export const LAMP = {
   height: 210,
   range: 380,
-  power: 0.72,
+  power: 0.85,
   /** How quickly it catches up with the pointer (share of the gap closed per frame at 60 fps). */
   follow: 0.16,
 };
@@ -104,9 +104,12 @@ export const STICKERS = {
 export const DIRECTION = {
   /** Pinned scroll distance of the closing sequence (arrow → heading → wordmark), in viewport heights. */
   travel: 2.4,
-  headingOut: [0.50, 0.66] as const,
-  brandIn: [0.76, 0.97] as const,
-  streetIn: [0.66, 1.0] as const,
+  headingOut: [0.54, 0.76] as const,
+  arrowOut: [0.50, 0.74] as const,
+  brandIn: [0.64, 0.89] as const,
+  streetIn: [0.48, 0.87] as const,
+  wordsIn: [0.755, 0.96] as const,
+  stickersIn: [0.49, 0.65] as const,
 };
 
 export const LOADER_LIMIT_MS = 3500;
